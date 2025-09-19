@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "./components/Sidebar";
 
 export interface NavigationItem {
@@ -163,17 +164,34 @@ export default function DashboardLayout({
   return (
     <div className="flex bg-gray-50">
       {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-50 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        >
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-75" />
-          <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white shadow-xl">
-            <Sidebar navigation={navigation} pathname={pathname} />
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-gray-600 bg-opacity-75"
+            />
+            <motion.div
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white shadow-xl"
+            >
+              <Sidebar navigation={navigation} pathname={pathname} />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Desktop sidebar */}
       <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
@@ -184,7 +202,9 @@ export default function DashboardLayout({
       <div className="flex flex-1 flex-col lg:pl-64">
         {/* Top navigation */}
         <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
             onClick={() => setSidebarOpen(true)}
@@ -203,7 +223,7 @@ export default function DashboardLayout({
                 d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
               />
             </svg>
-          </button>
+          </motion.button>
 
           <div className="h-6 w-px bg-gray-200 lg:hidden" />
 

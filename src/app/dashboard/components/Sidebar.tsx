@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { NavigationItem } from "../layout";
 
 export default function Sidebar({
@@ -9,48 +10,95 @@ export default function Sidebar({
   pathname: string;
 }) {
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 py-4 shadow-lg">
-      <div className="flex h-16 shrink-0 items-center">
-        <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+    <motion.div
+      initial={{ x: -100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 py-4 shadow-lg"
+    >
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="flex h-16 shrink-0 items-center"
+      >
+        <motion.div
+          whileHover={{ rotate: 360 }}
+          transition={{ duration: 0.6 }}
+          className="h-8 w-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center"
+        >
           <span className="text-white font-bold text-lg">Z</span>
-        </div>
+        </motion.div>
         <span className="ml-3 text-xl font-bold text-gray-900">Zettabyte</span>
-      </div>
+      </motion.div>
       <nav className="flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
           <li>
-            <ul role="list" className="-mx-2 space-y-1">
+            <motion.ul
+              role="list"
+              className="-mx-2 space-y-1"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                    delayChildren: 0.2,
+                  },
+                },
+              }}
+            >
               {navigation.map((item) => {
                 const isActive =
                   pathname === item.href ||
                   pathname.startsWith(item.href + "/");
                 return (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      className={`group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium transition-all duration-200 ${
-                        isActive
-                          ? "bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 border-r-2 border-blue-600"
-                          : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                      }`}
+                  <motion.li
+                    key={item.name}
+                    variants={{
+                      hidden: { x: -20, opacity: 0 },
+                      visible: { x: 0, opacity: 1 },
+                    }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ duration: 0.1 }}
                     >
-                      <span
-                        className={`${
+                      <Link
+                        href={item.href}
+                        className={`group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium transition-all duration-200 ${
                           isActive
-                            ? "text-blue-600"
-                            : "text-gray-400 group-hover:text-blue-600"
+                            ? "bg-gradient-to-r from-blue-50 to-purple-50 text-blue-600 border-r-2 border-blue-600"
+                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                         }`}
                       >
-                        {item.icon}
-                      </span>
-                      {item.name}
-                    </Link>
-                  </li>
+                        <span
+                          className={`${
+                            isActive
+                              ? "text-blue-600"
+                              : "text-gray-400 group-hover:text-blue-600"
+                          }`}
+                        >
+                          {item.icon}
+                        </span>
+                        {item.name}
+                      </Link>
+                    </motion.div>
+                  </motion.li>
                 );
               })}
-            </ul>
+            </motion.ul>
           </li>
-          <li className="mt-auto">
+          <motion.li
+            className="mt-auto"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+          >
             <div className="rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 p-4">
               <div className="flex items-center gap-x-3">
                 <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
@@ -76,9 +124,9 @@ export default function Sidebar({
                 </div>
               </div>
             </div>
-          </li>
+          </motion.li>
         </ul>
       </nav>
-    </div>
+    </motion.div>
   );
 }
