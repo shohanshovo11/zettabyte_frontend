@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import SimpleModal from "../../../components/modals/SimpleModal";
 
 interface Post {
   id: number;
@@ -13,6 +15,7 @@ export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -55,7 +58,12 @@ export default function PostsPage() {
           <p className="mt-2 text-gray-600">Manage and view all blog posts</p>
         </div>
         <div className="mt-4 sm:mt-0">
-          <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+          >
             <svg
               className="w-4 h-4 mr-2"
               fill="none"
@@ -70,7 +78,7 @@ export default function PostsPage() {
               />
             </svg>
             New Post
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -194,10 +202,18 @@ export default function PostsPage() {
       </div>
 
       {/* Posts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredPosts.map((post) => (
-          <div
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ staggerChildren: 0.1 }}
+      >
+        {filteredPosts.map((post, index) => (
+          <motion.div
             key={post.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
             className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
           >
             <div className="p-6">
@@ -256,9 +272,9 @@ export default function PostsPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {filteredPosts.length === 0 && !loading && (
         <div className="text-center py-12 min-h-screen">
@@ -283,6 +299,9 @@ export default function PostsPage() {
           </p>
         </div>
       )}
+
+      {/* New Post Modal */}
+      <SimpleModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
